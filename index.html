@@ -14,7 +14,6 @@ body {
   color: #1a1a1a;
 }
 
-	
 /* Titre */
 h1 {
   text-align: center;
@@ -56,7 +55,6 @@ h1 {
 }
 .accordion.active .arrow { transform: translateY(-50%) rotate(90deg); }
 
-
 /* Bouton accordéon version rouge */
 .accordion.red {
   background-color: #ffd6d6;
@@ -66,9 +64,6 @@ h1 {
 .accordion.red:hover {
   background-color: #ffc0c0;
 }
-
-
-	
 
 /* Liens dans les boutons d'accordéon en noir */
 .accordion a,
@@ -93,8 +88,6 @@ h1 {
   border-radius: 0 0 0px 0px;
   overflow-x: auto;
 }
-
-
 
 .accordion.violet {
   background-color: #eadcff;
@@ -164,9 +157,6 @@ h1 {
   box-shadow: 0 0 2px rgba(0,0,0,0.2);
 }
 
-
-
-
 /* Mode nuit */
 body.dark-mode {
   background: #0a0e1a !important;  /* remplace le dégradé clair */
@@ -174,7 +164,6 @@ body.dark-mode {
 
 /* Les boutons #dark-mode-toggle et #close-accordions-button sont désormais
    stylés comme .nav-btn dans la surcouche navbar (voir plus bas dans ce fichier) */
-
 
 .mental-grid {
   display: grid;
@@ -230,12 +219,6 @@ body.dark-mode {
   background: #6ba5d8;
 }
 
-
-#mental-panel {
-  background: transparent !important;
-border: none;
-}
-
 /* === STYLE CARTES POUR LES SEQUENCES === */
 .sequence-grid {
   display: grid;
@@ -256,19 +239,6 @@ border: none;
   transition: transform 0.2s ease;
 }
 .sequence-card:hover { transform: translateY(-3px); }
-
-.sequence-card2 {
-  background: #6050dc;
-  border: 1px solid #c8d2e4;
-  border-radius: 12px;
-  padding: 14px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  transition: transform 0.2s ease;
-}
-.sequence-card2:hover { transform: translateY(-3px); }	  
 
 .sequence-card h3 {
   text-align: center;
@@ -297,26 +267,6 @@ border: none;
   transition: background 0.3s;
 }
 .sequence-card a:hover { background: #6ba5d8; }
-
-.sequence-card2 h3 {
-  text-align: center;
-  font-size: 1rem;
-  margin: 0;
-  color: #1a1a1a;
-}
-
-.sequence-card2 a {
-  align-self: flex-start;
-  background: #8dbbe6;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: bold;
-  text-decoration: none;
-  transition: background 0.3s;
-}
-.sequence-card2 a:hover { background: #6ba5d8; }	  
 
 /* Mini accordéon pour Compétences / Exemples */
 .mini-accordion {
@@ -379,7 +329,6 @@ border: none;
   opacity: 0.95;
   pointer-events: none;
 }
-.sequence-links a.no-icon::before { display: none; }
 
 /* --------- Liens YouTube --------- */
 .sequence-linksYT a {
@@ -485,7 +434,6 @@ border: none;
   pointer-events: none;
 }
 
-
 .sequence-linksEVALV { 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -533,14 +481,6 @@ border: none;
   pointer-events: none;
 }
 
-
-
-
-
-
-
-
-	  
 /* Layout responsive des blocs de liens */
 .sequence-links,
 .sequence-linksYT,
@@ -555,38 +495,6 @@ border: none;
 .sequence-linksEXE a {
   text-align: center;
 }
-
-#title-container {
-  display: flex;
-  justify-content: center;   /* centre l’ensemble */
-  align-items: flex-start;   /* aligne en haut */
-  gap: 20px;                 /* espace entre les deux cadres */
-  flex-wrap: wrap;           /* permet retour à la ligne sur petits écrans */
-  margin-bottom: 40px;
-}
-
-#title-container h1 {
-  margin: 0;
-  flex: 0 1 800px;           /* garde la largeur max du h1 */
-}
-
-.small-link-box {
-  font-size: 16px;
-  padding: 6px 12px;
-  border: 2px solid #8dbbe6;
-  border-radius: 8px;
-  background-color: #eef6ff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  text-decoration: none;
-  color: #1a1a1a;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
-.small-link-box:hover {
-  background-color: #dbeeff;
-}
-
 
 .sequence-linksCours { 
   text-align: center;
@@ -623,15 +531,6 @@ border: none;
   opacity: 0.95;
   pointer-events: none;
 }
-.sequence-linksCours a.no-icon::before { display: none; }
-
-
-
-
-
-
-
-
 
 .sequence-linksActG { 
   display: grid;
@@ -670,11 +569,6 @@ border: none;
   opacity: 0.95;
   pointer-events: none;
 }
-.sequence-linksCours a.no-icon::before { display: none; }
-
-
-
-
 
 .sequence-linksActPA { 
   display: grid;
@@ -714,19 +608,6 @@ border: none;
   pointer-events: none;
 }
 
-
-
-
-
-
-
-
-
-
-
-	  
-	  
-	  
 .sequence-linksEXG { 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -764,11 +645,6 @@ border: none;
   opacity: 0.95;
   pointer-events: none;
 }
-.sequence-linksCours a.no-icon::before { display: none; }
-
-
-
-
 
 /* Le conteneur reste le même; on réserve juste de la place à droite */
 .sequence-linksEVAL { position: relative; }
@@ -806,17 +682,6 @@ border: none;
   display: none !important;
   content: none !important;
 }	  
-
-
-
-
-
-
-
-
-
-
-
 
 /* === Fond ciel bleu pour le mode jour === */
 body {
@@ -878,12 +743,6 @@ body.dark-mode #star-background {
   to { transform: translate(300px,300px) rotate(45deg); opacity: 0; }
 }
 
-
-
-
-
-
-	  
 /* === Nuages version réaliste === */
 .cloud {
   position: fixed;
@@ -923,9 +782,6 @@ body:not(.dark-mode) .cloud {
   }
 }
 
-	  
-
-
 .cloud {
   animation: floatClouds var(--speed, 90s) linear infinite,
              cloudDrift 6s ease-in-out infinite alternate;
@@ -935,14 +791,6 @@ body:not(.dark-mode) .cloud {
   0% { transform: translateY(0) scale(var(--scale, 1)); }
   100% { transform: translateY(10px) scale(var(--scale, 1)); }
 }
-
-	  
-	  
-
-
-/* Les anciens boutons #fifth-grade-button et #latex-button en position fixed
-   sont désormais remplacés par .nav-link / #latex-button.nav-link ci-dessous */
-
 
 /* ============================================================
    SURCOUCHE : Barre de navigation (style structure Site 2)
@@ -1073,6 +921,31 @@ body.dark-mode .nav-link:hover { background-color: #26314a; }
    (numéro à gauche + titre, cadre unique quand ouvert)
    Couleurs conservées du Site 1 comme liseré / numéro
    ============================================================ */
+
+/* Séparateur visuel entre deux sections */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 28px 0;
+}
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #8dbbe6, transparent);
+}
+.section-divider span {
+  font-size: 1.1rem;
+  color: #6ba5d8;
+  opacity: 0.85;
+}
+body.dark-mode .section-divider::before,
+body.dark-mode .section-divider::after {
+  background: linear-gradient(to right, transparent, #3a4d6b, transparent);
+}
+body.dark-mode .section-divider span { color: #9fb3cc; }
 
 .chapter { margin-bottom: 14px; }
 
@@ -1403,7 +1276,6 @@ body.dark-mode .mini-accordion { background-color: #1c2436; border-color: #3a4d6
 body.dark-mode .mini-accordion:hover { background-color: #26314a; }
 body.dark-mode .mini-panel { background-color: #141a28; border-color: #3a4d6b; color: #cdd8ea; }
 body.dark-mode .sequence-card,
-body.dark-mode .sequence-card2,
 body.dark-mode .mental-card {
   background-color: #1c2436;
   border-color: #3a4d6b;
@@ -1532,12 +1404,6 @@ body.dark-mode .small-link-box:hover { background-color: #26314a; }
 </div>
 </div>
 </div></section>
-	
-
-
-
-	
-
 
 <!-- Séquence 1 -->
 <section class="chapter"><button class="chap-btn"><span class="chap-num">01</span><div class="chap-info"><div class="chap-name">Nombres entiers</div></div><span class="chap-arr">▶</span></button><div class="chap-body">
@@ -1786,12 +1652,6 @@ body.dark-mode .small-link-box:hover { background-color: #26314a; }
 </div>
 </div></section>
 
-
-
-
-
-
-
 <!-- Bandeau vacances : Toussaint (automne) -->
 <section class="chapter">
 <div class="chap-btn season-banner autumn">
@@ -1817,11 +1677,6 @@ body.dark-mode .small-link-box:hover { background-color: #26314a; }
 </div>
 </section>
 
-
-
-
-
-	
 <!-- Séquence 4 -->
 <section class="chapter red"><button class="chap-btn"><span class="chap-num">04</span><div class="chap-info"><div class="chap-name">Espace et volumes</div></div><span class="chap-arr">▶</span></button><div class="chap-body">
 <div class="sequence-linksCours">
@@ -1880,8 +1735,6 @@ body.dark-mode .small-link-box:hover { background-color: #26314a; }
 </div>
 </div></section>
 <!-- Séquence 5 -->
-
-
 
 <section class="chapter"><button class="chap-btn"><span class="chap-num">05</span><div class="chap-info"><div class="chap-name">Additions, soustractions et durées</div></div><span class="chap-arr">▶</span></button><div class="chap-body">
 <div class="sequence-linksCours">
@@ -2194,7 +2047,6 @@ rapporteur.<br/>
 </div>
 </section>
 
-	
 <!-- Séquence 9 -->
 <section class="chapter"><button class="chap-btn"><span class="chap-num">09</span><div class="chap-info"><div class="chap-name">Multiplications et divisions</div></div><span class="chap-arr">▶</span></button><div class="chap-body">
 <div class="sequence-linksCours">
@@ -2293,7 +2145,6 @@ rapporteur.<br/>
 </div>
 </div></section>
 <!-- Séquence 10 -->
-
 
 <section class="chapter red"><button class="chap-btn"><span class="chap-num">10</span><div class="chap-info"><div class="chap-name">Symétrie axiale</div></div><span class="chap-arr">▶</span></button><div class="chap-body">
 <div class="sequence-linksCours">
@@ -2475,8 +2326,6 @@ rapporteur.<br/>
 </div>
 </div></section>
 
-
-	
 <!-- Bandeau vacances : Noël (hiver) -->
 <section class="chapter">
 <div class="chap-btn season-banner winter">
@@ -2500,7 +2349,6 @@ rapporteur.<br/>
 </div>
 </section>
 
-	
 <!-- Séquence 13 -->
 <section class="chapter green"><button class="chap-btn"><span class="chap-num">13</span><div class="chap-info"><div class="chap-name">Proportionnalité et pourcentage</div></div><span class="chap-arr">▶</span></button><div class="chap-body">
 <div class="sequence-grid">
@@ -2770,8 +2618,6 @@ rapporteur.<br/>
 </div>
 </section>
 
-
-	
 <!-- Séquence 15 -->
 <section class="chapter green"><button class="chap-btn"><span class="chap-num">15</span><div class="chap-info"><div class="chap-name">Probabilités</div></div><span class="chap-arr">▶</span></button><div class="chap-body">
 <div class="sequence-grid">
@@ -2917,8 +2763,7 @@ rapporteur.<br/>
 </div>
 </section>
 
-
-
+<div class="section-divider"><span>✦</span></div>
 
 <!-- Séquence transversale : Calcul mental -->
 <section class="chapter multicolor"><button class="chap-btn"><span class="chap-num">⚙</span><div class="chap-info"><div class="chap-name">Calcul mental et automatismes</div></div><span class="chap-arr">▶</span></button><div class="chap-body">
@@ -2964,14 +2809,6 @@ rapporteur.<br/>
 </div>
 </div></section>
 
-
-
-
-
-
-
-
-	
 <!-- Séquence transversale : Initiation à la pensée informatique -->
 <section class="chapter white"><button class="chap-btn"><span class="chap-num">T</span><div class="chap-info"><div class="chap-name">Initiation à la pensée informatique</div></div><span class="chap-arr">▶</span></button><div class="chap-body">
 <div class="sequence-grid">
