@@ -163,6 +163,137 @@ body.dark-mode {
   background: #0a0e1a !important;  /* remplace le dégradé clair */
 }
 
+/* === Carte titre (hero) === */
+.hero-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  max-width: 760px;
+  margin: 0 auto 40px auto;
+  padding: 26px 34px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ffffff, #eef4ff);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.hero-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #2196f3, #9c27b0);
+}
+.hero-icon {
+  flex-shrink: 0;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: background 0.3s ease;
+}
+.hero-icon svg { width: 44px; height: 44px; }
+.hero-content { flex: 1; min-width: 0; }
+.hero-content h1 {
+  all: unset;
+  display: block;
+  font-size: 32px;
+  font-weight: 800;
+  color: #0d1b3e;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+.hero-content h1 sup { font-size: 0.55em; }
+.hero-subtitle {
+  font-size: 14px;
+  color: #555;
+  margin: 0 0 12px 0;
+  max-width: 520px;
+}
+.hero-progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5a6478;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.hero-progress-label span:last-child {
+  color: #2196f3;
+  font-weight: 800;
+}
+.hero-progressbar {
+  width: 100%;
+  max-width: 100%;
+  height: 10px;
+  border-radius: 6px;
+  background: #e0e6f0;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.hero-progressbar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #2196f3, #9c27b0);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.25) 75%,
+    transparent 75%,
+    transparent
+  ), linear-gradient(90deg, #2196f3, #9c27b0);
+  background-size: 28px 28px, 100% 100%;
+  animation: hero-progress-stripes 1.2s linear infinite;
+  transition: width 0.6s ease;
+}
+@keyframes hero-progress-stripes {
+  from { background-position: 28px 0, 0 0; }
+  to { background-position: 0 0, 0 0; }
+}
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  font-size: 15px;
+  color: #333;
+}
+.hero-tags .sep { color: #9aa5c0; }
+
+body.dark-mode .hero-card {
+  background: linear-gradient(135deg, #10162e, #0a0e1f);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+body.dark-mode .hero-icon {
+  background: rgba(255, 255, 255, 0.08);
+}
+body.dark-mode .hero-content h1 { color: #ffffff; }
+body.dark-mode .hero-subtitle { color: #b7c0d8; }
+body.dark-mode .hero-tags { color: #d3d9ec; }
+body.dark-mode .hero-progressbar { background: rgba(255, 255, 255, 0.15); }
+body.dark-mode .hero-progress-label { color: #aab4d0; }
+body.dark-mode .hero-progress-label span:last-child { color: #6bb4ff; }
+
+@media (max-width: 600px) {
+  .hero-card { flex-direction: column; text-align: center; padding: 24px 20px; }
+  .hero-progressbar { margin-left: auto; margin-right: auto; }
+  .hero-tags { justify-content: center; }
+}
+
 /* Les boutons #dark-mode-toggle et #close-accordions-button sont désormais
    stylés comme .nav-btn dans la surcouche navbar (voir plus bas dans ce fichier) */
 
@@ -1369,7 +1500,29 @@ body.dark-mode .small-link-box:hover { background-color: #26314a; }
 </div>
 </nav>
 <main>
-<h1>Mathématiques — Sixième<br/><span style="display:block; font-size:15px; font-weight:normal; margin-top:8px; color:#444;">Retrouvez ici une proposition de progression pour l'année 2026/2027 avec cours, fiches d'exercices et autres ressources.</span></h1>
+<div class="hero-card">
+<div class="hero-icon">
+<svg fill="none" stroke="#2196f3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="6.2" r="1.4"></circle>
+<path d="M12 7.6 L7 20 M12 7.6 L17 20"></path>
+<path d="M9 15 L15 15"></path>
+</svg>
+</div>
+<div class="hero-content">
+<h1>Mathématiques – 6<sup>e</sup></h1>
+<div class="hero-progress-label">
+<span>Progression de l'année scolaire</span>
+<span id="school-year-percent">0%</span>
+</div>
+<div class="hero-progressbar"><div class="hero-progressbar-fill" id="school-year-progress"></div></div>
+<div class="hero-tags">
+<span>📖 Progression</span><span class="sep">•</span>
+<span>📗 Cours</span><span class="sep">•</span>
+<span>✏️ Exercices</span><span class="sep">•</span>
+<span>📋 Évaluations</span>
+</div>
+</div>
+</div>
 <!-- Séance 0 -->
 <section class="chapter white2"><button class="chap-btn"><span class="chap-num">0</span><div class="chap-info"><div class="chap-name">Introduction de l'année</div></div><span class="chap-arr">▶</span></button><div class="chap-body">
 <div class="sequence-grid">
@@ -3444,6 +3597,32 @@ rapporteur.<br/>
         if (miniPanel) miniPanel.style.display = 'none';
       });
     });
+
+    // Barre de progression de l'année scolaire (3 septembre → 24 juin)
+    (function updateSchoolYearProgress() {
+      const bar = document.getElementById('school-year-progress');
+      if (!bar) return;
+
+      const now = new Date();
+      const year = now.getFullYear();
+      // L'année scolaire commence en septembre et se termine en juin de l'année suivante
+      const startYear = now.getMonth() >= 7 ? year : year - 1; // à partir d'août on considère la nouvelle année scolaire
+      const start = new Date(startYear, 8, 3);      // 3 septembre
+      const end = new Date(startYear + 1, 5, 24);   // 24 juin
+
+      let percent;
+      if (now <= start) {
+        percent = 0;
+      } else if (now >= end) {
+        percent = 100;
+      } else {
+        percent = ((now - start) / (end - start)) * 100;
+      }
+
+      bar.style.width = percent.toFixed(1) + '%';
+      const label = document.getElementById('school-year-percent');
+      if (label) label.textContent = Math.round(percent) + '%';
+    })();
 
     // Masquer la barre de navigation au scroll vers le bas
     const nav = document.getElementById('nav');
