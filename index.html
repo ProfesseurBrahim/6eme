@@ -845,6 +845,36 @@ body.dark-mode #star-background {
   display: block;
 }
 
+/* Poisson-lanterne interactif (uniquement en mode nuit, derrière les accordéons) */
+#anglerfish-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  display: none;
+}
+body.dark-mode #anglerfish-canvas {
+  display: block;
+}
+
+/* Libellule interactive (uniquement en mode jour, derrière les accordéons) */
+#dragonfly-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  display: block;
+}
+body.dark-mode #dragonfly-canvas {
+  display: none;
+}
+
 /* Petites étoiles scintillantes */
 .star {
   position: absolute;
@@ -3294,6 +3324,10 @@ rapporteur.<br/>
 <div id="stars"></div>
 <div id="shooting-stars"></div>
 </div>
+<!-- 🐟 Poisson-lanterne interactif (mode nuit uniquement) -->
+<canvas id="anglerfish-canvas"></canvas>
+<!-- 🦋 Libellule interactive (mode jour uniquement) -->
+<canvas id="dragonfly-canvas"></canvas>
 <script>
 function createStars(count = 120) {
   const starsContainer = document.getElementById('stars');
@@ -3366,6 +3400,637 @@ function drawMatrix() {
 }
 
 setInterval(drawMatrix, 50);
+</script>
+<script>
+// === 🐟 Poisson-lanterne interactif (mode nuit uniquement, derrière les accordéons) ===
+(function () {
+  const canvas = document.getElementById('anglerfish-canvas');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const pointer = {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
+    vx: 0,
+    vy: 0
+  };
+  let hasMouse = false;
+
+  window.addEventListener('mousemove', (e) => {
+    pointer.vx = e.clientX - pointer.x;
+    pointer.vy = e.clientY - pointer.y;
+    pointer.x = e.clientX;
+    pointer.y = e.clientY;
+    hasMouse = true;
+  });
+
+  const SEGMENT_COUNT = 16;
+  const BASE_SEGMENT_LEN = 13;
+  const segments = [];
+  for (let i = 0; i < SEGMENT_COUNT; i++) {
+    segments.push({ x: pointer.x, y: pointer.y });
+  }
+
+  let headAngle = 0;
+  let time = 0;
+
+  function update() {
+    time += 0.016;
+    const head = segments[0];
+    const ease = 0.1;
+    head.x += (pointer.x - head.x) * ease;
+    head.y += (pointer.y - head.y) * ease;
+
+    const dx0 = pointer.x - head.x;
+    const dy0 = pointer.y - head.y;
+    if (Math.hypot(dx0, dy0) > 1) {
+      headAngle = Math.atan2(dy0, dx0);
+    }
+
+    const pointerSpeed = Math.hypot(pointer.vx, pointer.vy);
+    const fastMovement = Math.min(Math.max(pointerSpeed - 12, 0) / 16, 1);
+    const segLen = BASE_SEGMENT_LEN * (1 + fastMovement * 0.6);
+
+    for (let i = 1; i < SEGMENT_COUNT; i++) {
+      const prev = segments[i - 1];
+      const cur = segments[i];
+      const ddx = prev.x - cur.x;
+      const ddy = prev.y - cur.y;
+      const dist = Math.hypot(ddx, ddy) || 0.0001;
+      const diff = dist - segLen;
+      const wave = Math.sin(time * 4 - i * 0.6) * 2 * (1 - fastMovement * 0.5);
+      const nx = -ddy / dist;
+      const ny = ddx / dist;
+      cur.x += (ddx / dist) * diff + nx * wave * 0.15;
+      cur.y += (ddy / dist) * diff + ny * wave * 0.15;
+    }
+
+    pointer.vx *= 0.9;
+    pointer.vy *= 0.9;
+  }
+
+  function drawBody() {
+    // Corps plein et effilé (silhouette pleine plutôt qu'un simple trait)
+    ctx.save();
+    ctx.shadowColor = 'rgba(195, 230, 255, 0.5)';
+    ctx.shadowBlur = 8;
+
+    const top = [];
+    const bottom = [];
+    for (let i = 0; i < segments.length; i++) {
+      const t = i / (segments.length - 1);
+      const w = 7.5 * Math.sin(Math.min(t * 1.6, 1) * Math.PI * 0.5) * (1 - t * 0.78) + 0.4;
+      const a = segments[i - 1] || segments[i];
+      const b = segments[i + 1] || segments[i];
+      const ang = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
+      top.push({ x: segments[i].x + Math.cos(ang) * w, y: segments[i].y + Math.sin(ang) * w });
+      bottom.push({ x: segments[i].x - Math.cos(ang) * w, y: segments[i].y - Math.sin(ang) * w });
+    }
+
+    const grad = ctx.createLinearGradient(segments[0].x, segments[0].y, segments[segments.length - 1].x, segments[segments.length - 1].y);
+    grad.addColorStop(0, 'rgba(205, 235, 255, 0.5)');
+    grad.addColorStop(0.5, 'rgba(150, 205, 255, 0.26)');
+    grad.addColorStop(1, 'rgba(120, 180, 255, 0.05)');
+
+    ctx.beginPath();
+    ctx.moveTo(top[0].x, top[0].y);
+    for (let i = 1; i < top.length; i++) ctx.lineTo(top[i].x, top[i].y);
+    for (let i = bottom.length - 1; i >= 0; i--) ctx.lineTo(bottom[i].x, bottom[i].y);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(200, 230, 255, 0.4)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawSpine() {
+    ctx.save();
+    ctx.shadowColor = 'rgba(190, 225, 255, 0.35)';
+    ctx.shadowBlur = 4;
+    ctx.strokeStyle = 'rgba(215, 238, 255, 0.5)';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(segments[0].x, segments[0].y);
+    for (let i = 1; i < segments.length; i++) ctx.lineTo(segments[i].x, segments[i].y);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawTicks() {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(190, 225, 255, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.shadowColor = 'rgba(190, 225, 255, 0.4)';
+    ctx.shadowBlur = 3;
+    for (let i = 2; i < SEGMENT_COUNT - 2; i++) {
+      const a = segments[i];
+      const b = segments[i + 1] || a;
+      const ang = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
+      const len = 3.5 * (1 - i / SEGMENT_COUNT);
+      ctx.beginPath();
+      ctx.moveTo(a.x - Math.cos(ang) * len, a.y - Math.sin(ang) * len);
+      ctx.lineTo(a.x + Math.cos(ang) * len, a.y + Math.sin(ang) * len);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawFins() {
+    ctx.save();
+    ctx.shadowColor = 'rgba(190, 225, 255, 0.3)';
+    ctx.shadowBlur = 4;
+    const base = segments[1];
+    const finAngle = headAngle + Math.PI / 2;
+    const flutter = Math.sin(time * 5) * 0.15;
+    [1, -1].forEach((side) => {
+      const cx = base.x + Math.cos(finAngle) * side * 7;
+      const cy = base.y + Math.sin(finAngle) * side * 7;
+      const fx = base.x + Math.cos(finAngle + flutter * side) * side * 13 - Math.cos(headAngle) * 5;
+      const fy = base.y + Math.sin(finAngle + flutter * side) * side * 13 - Math.sin(headAngle) * 5;
+      const bx = base.x - Math.cos(headAngle) * 6;
+      const by = base.y - Math.sin(headAngle) * 6;
+      ctx.beginPath();
+      ctx.moveTo(base.x, base.y);
+      ctx.quadraticCurveTo(cx, cy, fx, fy);
+      ctx.quadraticCurveTo((fx + bx) / 2, (fy + by) / 2, bx, by);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(180, 220, 255, 0.16)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(200, 230, 255, 0.4)';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  function drawTail() {
+    const tail = segments[SEGMENT_COUNT - 1];
+    const tailPrev = segments[SEGMENT_COUNT - 2];
+    const tailAngle = Math.atan2(tail.y - tailPrev.y, tail.x - tailPrev.x);
+    ctx.save();
+    ctx.shadowColor = 'rgba(190, 225, 255, 0.35)';
+    ctx.shadowBlur = 4;
+    ctx.fillStyle = 'rgba(190, 225, 255, 0.28)';
+    ctx.strokeStyle = 'rgba(210, 235, 255, 0.45)';
+    ctx.lineWidth = 0.8;
+    const forkA = tailAngle + 0.45;
+    const forkB = tailAngle - 0.45;
+    ctx.beginPath();
+    ctx.moveTo(tail.x, tail.y);
+    ctx.quadraticCurveTo(
+      tail.x + Math.cos(forkA) * 8, tail.y + Math.sin(forkA) * 8,
+      tail.x + Math.cos(forkA) * 15, tail.y + Math.sin(forkA) * 15
+    );
+    ctx.lineTo(tail.x + Math.cos(tailAngle) * 7, tail.y + Math.sin(tailAngle) * 7);
+    ctx.lineTo(tail.x + Math.cos(forkB) * 15, tail.y + Math.sin(forkB) * 15);
+    ctx.quadraticCurveTo(
+      tail.x + Math.cos(forkB) * 8, tail.y + Math.sin(forkB) * 8,
+      tail.x, tail.y
+    );
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawHead() {
+    const head = segments[0];
+    ctx.save();
+    ctx.fillStyle = 'rgba(210, 235, 255, 0.5)';
+    ctx.shadowColor = 'rgba(210, 235, 255, 0.5)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.ellipse(head.x, head.y, 7, 5, headAngle, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // mâchoire inférieure (silhouette anglerfish)
+    ctx.save();
+    ctx.strokeStyle = 'rgba(200, 230, 255, 0.4)';
+    ctx.lineWidth = 0.8;
+    const jawAngle = headAngle + 0.5;
+    ctx.beginPath();
+    ctx.moveTo(head.x + Math.cos(headAngle) * 3, head.y + Math.sin(headAngle) * 3);
+    ctx.lineTo(head.x + Math.cos(jawAngle) * 6, head.y + Math.sin(jawAngle) * 6);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(20, 30, 45, 0.9)';
+    const eyeX = head.x + Math.cos(headAngle - 0.3) * 3;
+    const eyeY = head.y + Math.sin(headAngle - 0.3) * 3;
+    ctx.beginPath();
+    ctx.arc(eyeX, eyeY, 1.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(220, 240, 255, 0.7)';
+    ctx.beginPath();
+    ctx.arc(eyeX - 0.5, eyeY - 0.5, 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawLure() {
+    const head = segments[0];
+    // La tige part de la tête et rejoint la position exacte du curseur :
+    // la lanterne "est" le point pointé par la souris, comme sur l'image de référence.
+    const tipX = pointer.x;
+    const tipY = pointer.y;
+    const midX = head.x + (tipX - head.x) * 0.55 + Math.cos(headAngle - Math.PI / 2) * 8;
+    const midY = head.y + (tipY - head.y) * 0.55 + Math.sin(headAngle - Math.PI / 2) * 8;
+
+    // Tige de la lanterne
+    ctx.save();
+    ctx.strokeStyle = 'rgba(190, 225, 255, 0.5)';
+    ctx.lineWidth = 1;
+    ctx.shadowColor = 'rgba(190, 225, 255, 0.3)';
+    ctx.shadowBlur = 3;
+    ctx.beginPath();
+    ctx.moveTo(head.x + Math.cos(headAngle) * 5, head.y + Math.sin(headAngle) * 5);
+    ctx.quadraticCurveTo(midX, midY, tipX, tipY);
+    ctx.stroke();
+    ctx.restore();
+
+    const pulse = 0.65 + Math.sin(time * 2.2) * 0.35;
+
+    // Rayons de lumière irradiant depuis la lanterne (comme sur l'image)
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const rayCount = 8;
+    for (let i = 0; i < rayCount; i++) {
+      const a = (i / rayCount) * Math.PI * 2 + time * 0.3;
+      const rayLen = 22 + pulse * 14 + Math.sin(time * 3 + i) * 4;
+      const grad = ctx.createLinearGradient(tipX, tipY, tipX + Math.cos(a) * rayLen, tipY + Math.sin(a) * rayLen);
+      grad.addColorStop(0, `rgba(200, 235, 255, ${0.22 * pulse})`);
+      grad.addColorStop(1, 'rgba(200, 235, 255, 0)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY);
+      ctx.lineTo(tipX + Math.cos(a) * rayLen, tipY + Math.sin(a) * rayLen);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Halo large, doux
+    const outerRadius = 34 + pulse * 12;
+    const outerGrad = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, outerRadius);
+    outerGrad.addColorStop(0, `rgba(150, 210, 255, ${0.22 * pulse})`);
+    outerGrad.addColorStop(0.5, `rgba(120, 190, 255, ${0.1 * pulse})`);
+    outerGrad.addColorStop(1, 'rgba(120, 190, 255, 0)');
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = outerGrad;
+    ctx.beginPath();
+    ctx.arc(tipX, tipY, outerRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Halo moyen, plus intense
+    const midRadius = 16 + pulse * 8;
+    const midGrad = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, midRadius);
+    midGrad.addColorStop(0, `rgba(210, 240, 255, ${0.9 * pulse})`);
+    midGrad.addColorStop(0.45, `rgba(140, 200, 255, ${0.45 * pulse})`);
+    midGrad.addColorStop(1, 'rgba(140, 200, 255, 0)');
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = midGrad;
+    ctx.beginPath();
+    ctx.arc(tipX, tipY, midRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Petite ampoule/perle lumineuse au centre, avec liseré doré subtil
+    ctx.save();
+    ctx.fillStyle = `rgba(255, 250, 235, ${0.85 * pulse + 0.15})`;
+    ctx.shadowColor = 'rgba(255, 250, 235, 0.9)';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(tipX, tipY, 2.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    if (!document.body.classList.contains('dark-mode')) return;
+    if (!hasMouse) return;
+
+    drawBody();
+    drawSpine();
+    drawTicks();
+    drawFins();
+    drawTail();
+    drawHead();
+    drawLure();
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+<script>
+// === 🦋 Libellule interactive (mode jour uniquement, derrière les accordéons) ===
+(function () {
+  const canvas = document.getElementById('dragonfly-canvas');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const pointer = {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
+    vx: 0,
+    vy: 0
+  };
+  let hasMouse = false;
+
+  window.addEventListener('mousemove', (e) => {
+    pointer.vx = e.clientX - pointer.x;
+    pointer.vy = e.clientY - pointer.y;
+    pointer.x = e.clientX;
+    pointer.y = e.clientY;
+    hasMouse = true;
+  });
+
+  const SEGMENT_COUNT = 10;
+  const BASE_SEGMENT_LEN = 8;
+  const segments = [];
+  for (let i = 0; i < SEGMENT_COUNT; i++) {
+    segments.push({ x: pointer.x, y: pointer.y });
+  }
+
+  let headAngle = 0;
+  let time = 0;
+  let wingPhase = 0;
+
+  function update() {
+    time += 0.016;
+    const head = segments[0];
+    const ease = 0.14;
+    head.x += (pointer.x - head.x) * ease;
+    head.y += (pointer.y - head.y) * ease;
+
+    const dx0 = pointer.x - head.x;
+    const dy0 = pointer.y - head.y;
+    if (Math.hypot(dx0, dy0) > 1) {
+      headAngle = Math.atan2(dy0, dx0);
+    }
+
+    const pointerSpeed = Math.hypot(pointer.vx, pointer.vy);
+    const fastMovement = Math.min(Math.max(pointerSpeed - 12, 0) / 16, 1);
+    const segLen = BASE_SEGMENT_LEN * (1 + fastMovement * 0.5);
+
+    // Battement d'ailes plus rapide quand la libellule vole vite
+    wingPhase += 0.55 + fastMovement * 0.5;
+
+    for (let i = 1; i < SEGMENT_COUNT; i++) {
+      const prev = segments[i - 1];
+      const cur = segments[i];
+      const ddx = prev.x - cur.x;
+      const ddy = prev.y - cur.y;
+      const dist = Math.hypot(ddx, ddy) || 0.0001;
+      const diff = dist - segLen;
+      const wave = Math.sin(time * 5 - i * 0.7) * 1.4 * (1 - fastMovement * 0.4);
+      const nx = -ddy / dist;
+      const ny = ddx / dist;
+      cur.x += (ddx / dist) * diff + nx * wave * 0.12;
+      cur.y += (ddy / dist) * diff + ny * wave * 0.12;
+    }
+
+    pointer.vx *= 0.9;
+    pointer.vy *= 0.9;
+  }
+
+  function drawBody() {
+    // Abdomen fin, segmenté, effilé vers la queue
+    ctx.save();
+    ctx.shadowColor = 'rgba(30, 90, 110, 0.25)';
+    ctx.shadowBlur = 4;
+
+    const top = [];
+    const bottom = [];
+    for (let i = 0; i < segments.length; i++) {
+      const t = i / (segments.length - 1);
+      const w = 3.4 * (1 - t * 0.85) + 0.3;
+      const a = segments[i - 1] || segments[i];
+      const b = segments[i + 1] || segments[i];
+      const ang = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
+      top.push({ x: segments[i].x + Math.cos(ang) * w, y: segments[i].y + Math.sin(ang) * w });
+      bottom.push({ x: segments[i].x - Math.cos(ang) * w, y: segments[i].y - Math.sin(ang) * w });
+    }
+
+    const grad = ctx.createLinearGradient(segments[0].x, segments[0].y, segments[segments.length - 1].x, segments[segments.length - 1].y);
+    grad.addColorStop(0, 'rgba(30, 140, 160, 0.85)');
+    grad.addColorStop(0.5, 'rgba(20, 110, 140, 0.7)');
+    grad.addColorStop(1, 'rgba(15, 90, 120, 0.45)');
+
+    ctx.beginPath();
+    ctx.moveTo(top[0].x, top[0].y);
+    for (let i = 1; i < top.length; i++) ctx.lineTo(top[i].x, top[i].y);
+    for (let i = bottom.length - 1; i >= 0; i--) ctx.lineTo(bottom[i].x, bottom[i].y);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // segmentation de l'abdomen
+    ctx.strokeStyle = 'rgba(10, 60, 80, 0.35)';
+    ctx.lineWidth = 0.6;
+    for (let i = 2; i < segments.length - 1; i++) {
+      const t = i / (segments.length - 1);
+      const w = 3.4 * (1 - t * 0.85) + 0.3;
+      const a = segments[i];
+      const b = segments[i + 1] || a;
+      const ang = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
+      ctx.beginPath();
+      ctx.moveTo(a.x + Math.cos(ang) * w, a.y + Math.sin(ang) * w);
+      ctx.lineTo(a.x - Math.cos(ang) * w, a.y - Math.sin(ang) * w);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawTailFin() {
+    const tail = segments[SEGMENT_COUNT - 1];
+    const tailPrev = segments[SEGMENT_COUNT - 2];
+    const tailAngle = Math.atan2(tail.y - tailPrev.y, tail.x - tailPrev.x);
+    ctx.save();
+    ctx.fillStyle = 'rgba(20, 110, 140, 0.5)';
+    ctx.strokeStyle = 'rgba(10, 70, 90, 0.4)';
+    ctx.lineWidth = 0.6;
+    const forkA = tailAngle + 0.4;
+    const forkB = tailAngle - 0.4;
+    ctx.beginPath();
+    ctx.moveTo(tail.x, tail.y);
+    ctx.lineTo(tail.x + Math.cos(forkA) * 6, tail.y + Math.sin(forkA) * 6);
+    ctx.lineTo(tail.x + Math.cos(tailAngle) * 4, tail.y + Math.sin(tailAngle) * 4);
+    ctx.lineTo(tail.x + Math.cos(forkB) * 6, tail.y + Math.sin(forkB) * 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawWings() {
+    const wingBase = segments[1] || segments[0];
+    // deux paires d'ailes : avant et arrière, en opposition de phase comme une vraie libellule
+    const flapFront = Math.sin(wingPhase) * 0.5;
+    const flapBack = Math.sin(wingPhase + Math.PI * 0.15) * 0.5;
+    const shimmer = 0.5 + Math.sin(time * 3) * 0.5;
+
+    function wing(offsetAlong, spread, length, flap, side) {
+      const perpAngle = headAngle + Math.PI / 2 * side;
+      const alongAngle = headAngle;
+      const baseX = wingBase.x + Math.cos(alongAngle) * offsetAlong;
+      const baseY = wingBase.y + Math.sin(alongAngle) * offsetAlong;
+      // l'angle d'ouverture de l'aile varie avec le battement (vue de dessus simulée par un raccourcissement)
+      const openAngle = perpAngle + flap * 0.6 * side;
+      const tipX = baseX + Math.cos(openAngle) * length;
+      const tipY = baseY + Math.sin(openAngle) * length * (0.55 + Math.abs(flap) * 0.4);
+      const ctrl1X = baseX + Math.cos(openAngle - 0.3 * side) * length * 0.5 + Math.cos(alongAngle) * spread * 0.3;
+      const ctrl1Y = baseY + Math.sin(openAngle - 0.3 * side) * length * 0.5 + Math.sin(alongAngle) * spread * 0.3;
+      const ctrl2X = baseX + Math.cos(openAngle + 0.25 * side) * length * 0.7 - Math.cos(alongAngle) * spread * 0.25;
+      const ctrl2Y = baseY + Math.sin(openAngle + 0.25 * side) * length * 0.7 - Math.sin(alongAngle) * spread * 0.25;
+
+      ctx.beginPath();
+      ctx.moveTo(baseX, baseY);
+      ctx.quadraticCurveTo(ctrl1X, ctrl1Y, tipX, tipY);
+      ctx.quadraticCurveTo(ctrl2X, ctrl2Y, baseX, baseY);
+      ctx.closePath();
+
+      const grad = ctx.createLinearGradient(baseX, baseY, tipX, tipY);
+      grad.addColorStop(0, `rgba(255, 255, 255, ${0.6 + shimmer * 0.25})`);
+      grad.addColorStop(0.6, `rgba(255, 255, 255, ${0.4 + shimmer * 0.2})`);
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0.08)');
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.strokeStyle = `rgba(40, 70, 90, ${0.5 + shimmer * 0.2})`;
+      ctx.lineWidth = 0.9;
+      ctx.stroke();
+
+      // nervures de l'aile
+      ctx.strokeStyle = `rgba(40, 70, 90, 0.4)`;
+      ctx.lineWidth = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(baseX, baseY);
+      ctx.lineTo(tipX, tipY);
+      ctx.stroke();
+    }
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(30, 60, 80, 0.35)';
+    ctx.shadowBlur = 3;
+    [1, -1].forEach((side) => {
+      wing(1, 8, 17, flapBack, side);   // paire arrière
+      wing(4, 7, 19, flapFront, side);  // paire avant, légèrement décalée, un peu plus grande
+    });
+    ctx.restore();
+  }
+
+  function drawHead() {
+    const head = segments[0];
+    ctx.save();
+    ctx.fillStyle = 'rgba(25, 120, 140, 0.85)';
+    ctx.shadowColor = 'rgba(20, 100, 120, 0.4)';
+    ctx.shadowBlur = 4;
+    ctx.beginPath();
+    ctx.ellipse(head.x, head.y, 3, 2.4, headAngle, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // grands yeux composés, caractéristiques de la libellule
+    ctx.save();
+    [1, -1].forEach((side) => {
+      const eyeAngle = headAngle + side * 1.1;
+      const ex = head.x + Math.cos(eyeAngle) * 2.2;
+      const ey = head.y + Math.sin(eyeAngle) * 2.2;
+      const grad = ctx.createRadialGradient(ex, ey, 0, ex, ey, 1.8);
+      grad.addColorStop(0, 'rgba(20, 60, 75, 0.95)');
+      grad.addColorStop(1, 'rgba(10, 40, 55, 0.7)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(ex, ey, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      // reflet du soleil dans l'œil
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.beginPath();
+      ctx.arc(ex - 0.5, ey - 0.5, 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  function drawSparkle() {
+    // scintillement de lumière au soleil, à la place de la lanterne, sur le curseur
+    const pulse = 0.6 + Math.sin(time * 3.5) * 0.4;
+    const x = pointer.x;
+    const y = pointer.y;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const rayCount = 4;
+    for (let i = 0; i < rayCount; i++) {
+      const a = (i / rayCount) * Math.PI * 2 + time * 0.6;
+      const rayLen = 9 + pulse * 6;
+      ctx.strokeStyle = `rgba(255, 250, 210, ${0.35 * pulse})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x - Math.cos(a) * rayLen, y - Math.sin(a) * rayLen);
+      ctx.lineTo(x + Math.cos(a) * rayLen, y + Math.sin(a) * rayLen);
+      ctx.stroke();
+    }
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, 10 + pulse * 4);
+    grad.addColorStop(0, `rgba(255, 250, 220, ${0.5 * pulse})`);
+    grad.addColorStop(1, 'rgba(255, 250, 220, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(x, y, 10 + pulse * 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    if (document.body.classList.contains('dark-mode')) return;
+    if (!hasMouse) return;
+
+    drawWings();
+    drawBody();
+    drawTailFin();
+    drawHead();
+    drawSparkle();
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
 </script>
 </body>
 </html>
