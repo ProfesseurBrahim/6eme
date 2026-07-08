@@ -1525,6 +1525,7 @@ body.dark-mode .small-link-box:hover { background-color: #26314a; }
 <span class="nav-sub">M. Brahim</span>
 </div>
 <div class="nav-side nav-right">
+<button id="toggle-animals-button" class="nav-btn" title="Activer/Désactiver les animations">🐟</button>
 <button class="nav-btn" id="close-accordions-button" title="Fermer tout">⊟</button>
 <button class="nav-btn" id="dark-mode-toggle" title="Mode jour / nuit">🌙</button>
 </div>
@@ -3257,14 +3258,62 @@ rapporteur.<br/>
       });
     });
 
-    // Mode jour / nuit
-    const toggleButton = document.getElementById('dark-mode-toggle');
-    toggleButton.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      toggleButton.textContent = document.body.classList.contains('dark-mode')
-        ? '☀️'
-        : '🌙';
-    });
+
+let animalsEnabled = true;
+
+const toggleAnimalsButton = document.getElementById("toggle-animals-button");
+
+toggleAnimalsButton.addEventListener("click", () => {
+    animalsEnabled = !animalsEnabled;
+
+    const dragonfly = document.getElementById("dragonfly-canvas");
+    const anglerfish = document.getElementById("anglerfish-canvas");
+
+    if (animalsEnabled) {
+        if (document.body.classList.contains("dark-mode")) {
+            anglerfish.style.display = "block";
+            dragonfly.style.display = "none";
+        } else {
+            dragonfly.style.display = "block";
+            anglerfish.style.display = "none";
+        }
+        toggleAnimalsButton.textContent = "🐟";
+        toggleAnimalsButton.title = "Désactiver les animations";
+    } else {
+        dragonfly.style.display = "none";
+        anglerfish.style.display = "none";
+        toggleAnimalsButton.textContent = "🚫";
+        toggleAnimalsButton.title = "Activer les animations";
+    }
+});
+
+
+// Mode jour / nuit
+const toggleButton = document.getElementById('dark-mode-toggle');
+toggleButton.addEventListener('click', () => {
+
+  document.body.classList.toggle('dark-mode');
+
+  toggleButton.textContent = document.body.classList.contains('dark-mode')
+    ? '☀️'
+    : '🌙';
+
+  const dragonfly = document.getElementById("dragonfly-canvas");
+  const anglerfish = document.getElementById("anglerfish-canvas");
+
+  if (animalsEnabled) {
+    dragonfly.style.display = document.body.classList.contains("dark-mode")
+      ? "none"
+      : "block";
+
+    anglerfish.style.display = document.body.classList.contains("dark-mode")
+      ? "block"
+      : "none";
+  } else {
+    dragonfly.style.display = "none";
+    anglerfish.style.display = "none";
+  }
+});
 
     // Bouton "Fermer tout"
     document.getElementById('close-accordions-button').addEventListener('click', () => {
