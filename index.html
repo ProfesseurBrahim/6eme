@@ -845,7 +845,7 @@ body.dark-mode #star-background {
   display: block;
 }
 
-/* Poisson-lanterne interactif (uniquement en mode nuit, derrière les accordéons) */
+/* Volute de poussière d'étoiles interactive (uniquement en mode nuit, derrière les accordéons) */
 #anglerfish-canvas {
   position: fixed;
   top: 0;
@@ -893,16 +893,17 @@ body.dark-mode #dragonfly-canvas {
 .shooting-star {
   position: absolute;
   width: 2px;
-  height: 100px;
-  background: linear-gradient(45deg, white, rgba(255,255,255,0));
-  opacity: 0.7;
-  transform: rotate(45deg);
-  animation: shoot 1.5s linear forwards;
+  height: 110px;
+  background: linear-gradient(to bottom, white, rgba(255,255,255,0));
+  opacity: 0.8;
+  border-radius: 2px;
+  transform: rotate(var(--angle, 0deg));
+  animation: shoot 1.4s linear forwards;
 }
 
 @keyframes shoot {
-  from { transform: translate(0,0) rotate(45deg); opacity: 1; }
-  to { transform: translate(300px,300px) rotate(45deg); opacity: 0; }
+  from { translate: 0 0; opacity: 1; }
+  to { translate: var(--tx, 0px) var(--ty, 300px); opacity: 0; }
 }
 
 /* === Nuages version réaliste === */
@@ -3717,7 +3718,7 @@ toggleButton.addEventListener('click', () => {
 <div id="stars"></div>
 <div id="shooting-stars"></div>
 </div>
-<!-- 🐟 Poisson-lanterne interactif (mode nuit uniquement) -->
+<!-- ✨ Volute de poussière d'étoiles interactive (mode nuit uniquement) -->
 <canvas id="anglerfish-canvas"></canvas>
 <!-- 🦋 Libellule interactive (mode jour uniquement) -->
 <canvas id="dragonfly-canvas"></canvas>
@@ -3744,6 +3745,20 @@ function createShootingStar() {
   star.classList.add('shooting-star');
   star.style.top = `${Math.random() * 50}%`;
   star.style.left = `${Math.random() * 80}%`;
+
+  // Angle de trajectoire aléatoire (en degrés, mesuré depuis l'horizontale,
+  // 15° à 165° = toujours vers le bas, tantôt vers la droite tantôt vers la gauche)
+  const angle = 15 + Math.random() * 150;
+  const distance = 220 + Math.random() * 180;
+  const rad = angle * Math.PI / 180;
+  const tx = Math.cos(rad) * distance;
+  const ty = Math.sin(rad) * distance;
+
+  // L'inclinaison visuelle de la traînée suit exactement la même direction
+  star.style.setProperty('--angle', `${angle - 90}deg`);
+  star.style.setProperty('--tx', `${tx}px`);
+  star.style.setProperty('--ty', `${ty}px`);
+
   container.appendChild(star);
   setTimeout(() => star.remove(), 1500);
 }
@@ -3795,7 +3810,7 @@ function drawMatrix() {
 setInterval(drawMatrix, 50);
 </script>
 <script>
-// === 🐟 Poisson-lanterne interactif (mode nuit uniquement, derrière les accordéons) ===
+// === ✨ Volute de poussière d'étoiles interactive (mode nuit uniquement, derrière les accordéons) ===
 (function () {
   const canvas = document.getElementById('anglerfish-canvas');
   const ctx = canvas.getContext('2d');
@@ -3810,311 +3825,50 @@ setInterval(drawMatrix, 50);
 
   const pointer = {
     x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
-    vx: 0,
-    vy: 0
+    y: window.innerHeight / 2
   };
   let hasMouse = false;
 
   window.addEventListener('mousemove', (e) => {
-    pointer.vx = e.clientX - pointer.x;
-    pointer.vy = e.clientY - pointer.y;
     pointer.x = e.clientX;
     pointer.y = e.clientY;
     hasMouse = true;
   });
 
-  const SEGMENT_COUNT = 16;
-  const BASE_SEGMENT_LEN = 13;
-  const segments = [];
-  for (let i = 0; i < SEGMENT_COUNT; i++) {
-    segments.push({ x: pointer.x, y: pointer.y });
-  }
-
-  let headAngle = 0;
+  const particles = [];
+  const MAX_PARTICLES = 90;
   let time = 0;
+
+  function spawnParticle() {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 0.25 + Math.random() * 0.5;
+    particles.push({
+      x: pointer.x + (Math.random() - 0.5) * 6,
+      y: pointer.y + (Math.random() - 0.5) * 6,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 0.25,
+      size: 0.8 + Math.random() * 1.6,
+      life: 1,
+      decay: 0.012 + Math.random() * 0.016,
+      warm: Math.random() < 0.28
+    });
+    if (particles.length > MAX_PARTICLES) particles.shift();
+  }
 
   function update() {
     time += 0.016;
-    const head = segments[0];
-    const ease = 0.1;
-    head.x += (pointer.x - head.x) * ease;
-    head.y += (pointer.y - head.y) * ease;
+    if (hasMouse && Math.random() < 0.75) spawnParticle();
 
-    const dx0 = pointer.x - head.x;
-    const dy0 = pointer.y - head.y;
-    if (Math.hypot(dx0, dy0) > 1) {
-      headAngle = Math.atan2(dy0, dx0);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy -= 0.0025; // légère montée, effet féérique
+      p.vx *= 0.98;
+      p.vy *= 0.98;
+      p.life -= p.decay;
+      if (p.life <= 0) particles.splice(i, 1);
     }
-
-    const pointerSpeed = Math.hypot(pointer.vx, pointer.vy);
-    const fastMovement = Math.min(Math.max(pointerSpeed - 12, 0) / 16, 1);
-    const segLen = BASE_SEGMENT_LEN * (1 + fastMovement * 0.6);
-
-    for (let i = 1; i < SEGMENT_COUNT; i++) {
-      const prev = segments[i - 1];
-      const cur = segments[i];
-      const ddx = prev.x - cur.x;
-      const ddy = prev.y - cur.y;
-      const dist = Math.hypot(ddx, ddy) || 0.0001;
-      const diff = dist - segLen;
-      const wave = Math.sin(time * 4 - i * 0.6) * 2 * (1 - fastMovement * 0.5);
-      const nx = -ddy / dist;
-      const ny = ddx / dist;
-      cur.x += (ddx / dist) * diff + nx * wave * 0.15;
-      cur.y += (ddy / dist) * diff + ny * wave * 0.15;
-    }
-
-    pointer.vx *= 0.9;
-    pointer.vy *= 0.9;
-  }
-
-  function drawBody() {
-    // Corps plein et effilé (silhouette pleine plutôt qu'un simple trait)
-    ctx.save();
-    ctx.shadowColor = 'rgba(195, 230, 255, 0.5)';
-    ctx.shadowBlur = 8;
-
-    const top = [];
-    const bottom = [];
-    for (let i = 0; i < segments.length; i++) {
-      const t = i / (segments.length - 1);
-      const w = 7.5 * Math.sin(Math.min(t * 1.6, 1) * Math.PI * 0.5) * (1 - t * 0.78) + 0.4;
-      const a = segments[i - 1] || segments[i];
-      const b = segments[i + 1] || segments[i];
-      const ang = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
-      top.push({ x: segments[i].x + Math.cos(ang) * w, y: segments[i].y + Math.sin(ang) * w });
-      bottom.push({ x: segments[i].x - Math.cos(ang) * w, y: segments[i].y - Math.sin(ang) * w });
-    }
-
-    const grad = ctx.createLinearGradient(segments[0].x, segments[0].y, segments[segments.length - 1].x, segments[segments.length - 1].y);
-    grad.addColorStop(0, 'rgba(205, 235, 255, 0.5)');
-    grad.addColorStop(0.5, 'rgba(150, 205, 255, 0.26)');
-    grad.addColorStop(1, 'rgba(120, 180, 255, 0.05)');
-
-    ctx.beginPath();
-    ctx.moveTo(top[0].x, top[0].y);
-    for (let i = 1; i < top.length; i++) ctx.lineTo(top[i].x, top[i].y);
-    for (let i = bottom.length - 1; i >= 0; i--) ctx.lineTo(bottom[i].x, bottom[i].y);
-    ctx.closePath();
-    ctx.fillStyle = grad;
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(200, 230, 255, 0.4)';
-    ctx.lineWidth = 0.8;
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function drawSpine() {
-    ctx.save();
-    ctx.shadowColor = 'rgba(190, 225, 255, 0.35)';
-    ctx.shadowBlur = 4;
-    ctx.strokeStyle = 'rgba(215, 238, 255, 0.5)';
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(segments[0].x, segments[0].y);
-    for (let i = 1; i < segments.length; i++) ctx.lineTo(segments[i].x, segments[i].y);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function drawTicks() {
-    ctx.save();
-    ctx.strokeStyle = 'rgba(190, 225, 255, 0.4)';
-    ctx.lineWidth = 1;
-    ctx.shadowColor = 'rgba(190, 225, 255, 0.4)';
-    ctx.shadowBlur = 3;
-    for (let i = 2; i < SEGMENT_COUNT - 2; i++) {
-      const a = segments[i];
-      const b = segments[i + 1] || a;
-      const ang = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
-      const len = 3.5 * (1 - i / SEGMENT_COUNT);
-      ctx.beginPath();
-      ctx.moveTo(a.x - Math.cos(ang) * len, a.y - Math.sin(ang) * len);
-      ctx.lineTo(a.x + Math.cos(ang) * len, a.y + Math.sin(ang) * len);
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  function drawFins() {
-    ctx.save();
-    ctx.shadowColor = 'rgba(190, 225, 255, 0.3)';
-    ctx.shadowBlur = 4;
-    const base = segments[1];
-    const finAngle = headAngle + Math.PI / 2;
-    const flutter = Math.sin(time * 5) * 0.15;
-    [1, -1].forEach((side) => {
-      const cx = base.x + Math.cos(finAngle) * side * 7;
-      const cy = base.y + Math.sin(finAngle) * side * 7;
-      const fx = base.x + Math.cos(finAngle + flutter * side) * side * 13 - Math.cos(headAngle) * 5;
-      const fy = base.y + Math.sin(finAngle + flutter * side) * side * 13 - Math.sin(headAngle) * 5;
-      const bx = base.x - Math.cos(headAngle) * 6;
-      const by = base.y - Math.sin(headAngle) * 6;
-      ctx.beginPath();
-      ctx.moveTo(base.x, base.y);
-      ctx.quadraticCurveTo(cx, cy, fx, fy);
-      ctx.quadraticCurveTo((fx + bx) / 2, (fy + by) / 2, bx, by);
-      ctx.closePath();
-      ctx.fillStyle = 'rgba(180, 220, 255, 0.16)';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(200, 230, 255, 0.4)';
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-    });
-    ctx.restore();
-  }
-
-  function drawTail() {
-    const tail = segments[SEGMENT_COUNT - 1];
-    const tailPrev = segments[SEGMENT_COUNT - 2];
-    const tailAngle = Math.atan2(tail.y - tailPrev.y, tail.x - tailPrev.x);
-    ctx.save();
-    ctx.shadowColor = 'rgba(190, 225, 255, 0.35)';
-    ctx.shadowBlur = 4;
-    ctx.fillStyle = 'rgba(190, 225, 255, 0.28)';
-    ctx.strokeStyle = 'rgba(210, 235, 255, 0.45)';
-    ctx.lineWidth = 0.8;
-    const forkA = tailAngle + 0.45;
-    const forkB = tailAngle - 0.45;
-    ctx.beginPath();
-    ctx.moveTo(tail.x, tail.y);
-    ctx.quadraticCurveTo(
-      tail.x + Math.cos(forkA) * 8, tail.y + Math.sin(forkA) * 8,
-      tail.x + Math.cos(forkA) * 15, tail.y + Math.sin(forkA) * 15
-    );
-    ctx.lineTo(tail.x + Math.cos(tailAngle) * 7, tail.y + Math.sin(tailAngle) * 7);
-    ctx.lineTo(tail.x + Math.cos(forkB) * 15, tail.y + Math.sin(forkB) * 15);
-    ctx.quadraticCurveTo(
-      tail.x + Math.cos(forkB) * 8, tail.y + Math.sin(forkB) * 8,
-      tail.x, tail.y
-    );
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function drawHead() {
-    const head = segments[0];
-    ctx.save();
-    ctx.fillStyle = 'rgba(210, 235, 255, 0.5)';
-    ctx.shadowColor = 'rgba(210, 235, 255, 0.5)';
-    ctx.shadowBlur = 8;
-    ctx.beginPath();
-    ctx.ellipse(head.x, head.y, 7, 5, headAngle, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // mâchoire inférieure (silhouette anglerfish)
-    ctx.save();
-    ctx.strokeStyle = 'rgba(200, 230, 255, 0.4)';
-    ctx.lineWidth = 0.8;
-    const jawAngle = headAngle + 0.5;
-    ctx.beginPath();
-    ctx.moveTo(head.x + Math.cos(headAngle) * 3, head.y + Math.sin(headAngle) * 3);
-    ctx.lineTo(head.x + Math.cos(jawAngle) * 6, head.y + Math.sin(jawAngle) * 6);
-    ctx.stroke();
-    ctx.restore();
-
-    ctx.save();
-    ctx.fillStyle = 'rgba(20, 30, 45, 0.9)';
-    const eyeX = head.x + Math.cos(headAngle - 0.3) * 3;
-    const eyeY = head.y + Math.sin(headAngle - 0.3) * 3;
-    ctx.beginPath();
-    ctx.arc(eyeX, eyeY, 1.6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    ctx.save();
-    ctx.fillStyle = 'rgba(220, 240, 255, 0.7)';
-    ctx.beginPath();
-    ctx.arc(eyeX - 0.5, eyeY - 0.5, 0.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  function drawLure() {
-    const head = segments[0];
-    // La tige part de la tête et rejoint la position exacte du curseur :
-    // la lanterne "est" le point pointé par la souris, comme sur l'image de référence.
-    const tipX = pointer.x;
-    const tipY = pointer.y;
-    const midX = head.x + (tipX - head.x) * 0.55 + Math.cos(headAngle - Math.PI / 2) * 8;
-    const midY = head.y + (tipY - head.y) * 0.55 + Math.sin(headAngle - Math.PI / 2) * 8;
-
-    // Tige de la lanterne
-    ctx.save();
-    ctx.strokeStyle = 'rgba(190, 225, 255, 0.5)';
-    ctx.lineWidth = 1;
-    ctx.shadowColor = 'rgba(190, 225, 255, 0.3)';
-    ctx.shadowBlur = 3;
-    ctx.beginPath();
-    ctx.moveTo(head.x + Math.cos(headAngle) * 5, head.y + Math.sin(headAngle) * 5);
-    ctx.quadraticCurveTo(midX, midY, tipX, tipY);
-    ctx.stroke();
-    ctx.restore();
-
-    const pulse = 0.65 + Math.sin(time * 2.2) * 0.35;
-
-    // Rayons de lumière irradiant depuis la lanterne (comme sur l'image)
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    const rayCount = 8;
-    for (let i = 0; i < rayCount; i++) {
-      const a = (i / rayCount) * Math.PI * 2 + time * 0.3;
-      const rayLen = 22 + pulse * 14 + Math.sin(time * 3 + i) * 4;
-      const grad = ctx.createLinearGradient(tipX, tipY, tipX + Math.cos(a) * rayLen, tipY + Math.sin(a) * rayLen);
-      grad.addColorStop(0, `rgba(200, 235, 255, ${0.22 * pulse})`);
-      grad.addColorStop(1, 'rgba(200, 235, 255, 0)');
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.moveTo(tipX, tipY);
-      ctx.lineTo(tipX + Math.cos(a) * rayLen, tipY + Math.sin(a) * rayLen);
-      ctx.stroke();
-    }
-    ctx.restore();
-
-    // Halo large, doux
-    const outerRadius = 34 + pulse * 12;
-    const outerGrad = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, outerRadius);
-    outerGrad.addColorStop(0, `rgba(150, 210, 255, ${0.22 * pulse})`);
-    outerGrad.addColorStop(0.5, `rgba(120, 190, 255, ${0.1 * pulse})`);
-    outerGrad.addColorStop(1, 'rgba(120, 190, 255, 0)');
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = outerGrad;
-    ctx.beginPath();
-    ctx.arc(tipX, tipY, outerRadius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // Halo moyen, plus intense
-    const midRadius = 16 + pulse * 8;
-    const midGrad = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, midRadius);
-    midGrad.addColorStop(0, `rgba(210, 240, 255, ${0.9 * pulse})`);
-    midGrad.addColorStop(0.45, `rgba(140, 200, 255, ${0.45 * pulse})`);
-    midGrad.addColorStop(1, 'rgba(140, 200, 255, 0)');
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = midGrad;
-    ctx.beginPath();
-    ctx.arc(tipX, tipY, midRadius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // Petite ampoule/perle lumineuse au centre, avec liseré doré subtil
-    ctx.save();
-    ctx.fillStyle = `rgba(255, 250, 235, ${0.85 * pulse + 0.15})`;
-    ctx.shadowColor = 'rgba(255, 250, 235, 0.9)';
-    ctx.shadowBlur = 10;
-    ctx.beginPath();
-    ctx.arc(tipX, tipY, 2.6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
   }
 
   function draw() {
@@ -4122,13 +3876,43 @@ setInterval(drawMatrix, 50);
     if (!document.body.classList.contains('dark-mode')) return;
     if (!hasMouse) return;
 
-    drawBody();
-    drawSpine();
-    drawTicks();
-    drawFins();
-    drawTail();
-    drawHead();
-    drawLure();
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+
+    // Halo doux et pulsant autour du curseur
+    const pulse = 0.6 + Math.sin(time * 2.2) * 0.25;
+    const haloRadius = 20 * pulse + 8;
+    const halo = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, haloRadius);
+    halo.addColorStop(0, 'rgba(215, 232, 255, 0.4)');
+    halo.addColorStop(1, 'rgba(215, 232, 255, 0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(pointer.x, pointer.y, haloRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Point lumineux central
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.beginPath();
+    ctx.arc(pointer.x, pointer.y, 1.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Traînée de poussière d'étoiles
+    particles.forEach((p) => {
+      const alpha = Math.max(p.life, 0);
+      const color = p.warm
+        ? `rgba(255, 235, 200, ${alpha})`
+        : `rgba(195, 222, 255, ${alpha})`;
+      const r = p.size * 2.4;
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+      grad.addColorStop(0, color);
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.restore();
   }
 
   function loop() {
