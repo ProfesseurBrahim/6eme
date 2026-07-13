@@ -3307,12 +3307,11 @@ rapporteur.<br/>
 </div>
 
 
-	
-	
+
 </main>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-
+ 
     // Accordéons niveau 1 (chapitres)
     document.querySelectorAll('.chap-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -3323,14 +3322,14 @@ rapporteur.<br/>
         }
       });
     });
-
+ 
     // Empêche l'ouverture du chapitre quand on clique sur un lien dans son titre
     document.querySelectorAll('.chap-btn a').forEach(link => {
       link.addEventListener('click', function (event) {
         event.stopPropagation();
       });
     });
-
+ 
     // Mini-accordéons (Compétence(s) / Exemple(s) de réussite)
     document.querySelectorAll(".mini-accordion").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -3339,18 +3338,18 @@ rapporteur.<br/>
         panel.style.display = (panel.style.display === "block") ? "none" : "block";
       });
     });
-
-
+ 
+ 
 let animalsEnabled = true;
-
+ 
 const toggleAnimalsButton = document.getElementById("toggle-animals-button");
-
+ 
 toggleAnimalsButton.addEventListener("click", () => {
     animalsEnabled = !animalsEnabled;
-
+ 
     const dragonfly = document.getElementById("dragonfly-canvas");
     const anglerfish = document.getElementById("anglerfish-canvas");
-
+ 
     if (animalsEnabled) {
         if (document.body.classList.contains("dark-mode")) {
             anglerfish.style.display = "block";
@@ -3368,28 +3367,28 @@ toggleAnimalsButton.addEventListener("click", () => {
         toggleAnimalsButton.title = "Activer les animations";
     }
 });
-
-
+ 
+ 
 // Mode jour / nuit
 const toggleButton = document.getElementById('dark-mode-toggle');
 toggleButton.addEventListener('click', () => {
-
+ 
   document.body.classList.toggle('dark-mode');
-
+ 
   if (document.getElementById('mindmap-svg')) renderMindmap();
-
+ 
   toggleButton.textContent = document.body.classList.contains('dark-mode')
     ? '☀️'
     : '🌙';
-
+ 
   const dragonfly = document.getElementById("dragonfly-canvas");
   const anglerfish = document.getElementById("anglerfish-canvas");
-
+ 
   if (animalsEnabled) {
     dragonfly.style.display = document.body.classList.contains("dark-mode")
       ? "none"
       : "block";
-
+ 
     anglerfish.style.display = document.body.classList.contains("dark-mode")
       ? "block"
       : "none";
@@ -3398,7 +3397,7 @@ toggleButton.addEventListener('click', () => {
     anglerfish.style.display = "none";
   }
 });
-
+ 
     // Bouton "Fermer tout"
     document.getElementById('close-accordions-button').addEventListener('click', () => {
       document.querySelectorAll('.chapter').forEach((ch) => {
@@ -3410,19 +3409,19 @@ toggleButton.addEventListener('click', () => {
         if (miniPanel) miniPanel.style.display = 'none';
       });
     });
-
+ 
     // Barre de progression de l'année scolaire (3 septembre → 24 juin)
     (function updateSchoolYearProgress() {
       const bar = document.getElementById('school-year-progress');
       if (!bar) return;
-
+ 
       const now = new Date();
       const year = now.getFullYear();
       // L'année scolaire commence en septembre et se termine en juin de l'année suivante
       const startYear = now.getMonth() >= 7 ? year : year - 1; // à partir d'août on considère la nouvelle année scolaire
       const start = new Date(startYear, 8, 3);      // 3 septembre
       const end = new Date(startYear + 1, 5, 24);   // 24 juin
-
+ 
       let percent;
       if (now <= start) {
         percent = 0;
@@ -3431,12 +3430,12 @@ toggleButton.addEventListener('click', () => {
       } else {
         percent = ((now - start) / (end - start)) * 100;
       }
-
+ 
       bar.style.width = percent.toFixed(1) + '%';
       const label = document.getElementById('school-year-percent');
       if (label) label.textContent = Math.round(percent) + '%';
     })();
-
+ 
     // Masquer la barre de navigation au scroll vers le bas
     const nav = document.getElementById('nav');
     let prevY = 0;
@@ -3445,11 +3444,11 @@ toggleButton.addEventListener('click', () => {
       nav.classList.toggle('hide', y > prevY && y > 80);
       prevY = y < 0 ? 0 : y;
     }, { passive: true });
-
+ 
     renderMindmap();
-
+ 
   });
-
+ 
   // ===== Carte mentale radiale — Ressources =====
   const MM_DATA = [
     { title: "Manuels", color: "#2196f3", links: [
@@ -3481,10 +3480,9 @@ toggleButton.addEventListener('click', () => {
       { href: "https://codimd.apps.education.fr/s/-69CDe8hE", label: "Progression V20" },
       { href: "https://www.monclasseurdemaths.fr/", label: "Labouche" },
       { href: "https://maths.fabregues.org/index.php/6eme", label: "Fabregues" },
-	  { href: "https://www.maths-et-tiques.fr/index.php/cours-maths/cours-de-maths-niveau-sixieme", label: "Maths&tiques" },
-      { href: "https://lmdbt.forge.apps.education.fr/latexiotheque/", label: "Latexiothèque" },
+      { href: "https://topmaths.fr/", label: "Topmaths" },
       { href: "https://pi.ac3j.fr/mathematiques-activites/", label: "Activités" },
-	  { href: "https://topmaths.fr/", label: "Topmaths" }
+      { href: "https://www.maths-et-tiques.fr/index.php/cours-maths/cours-de-maths-niveau-sixieme", label: "Maths&tiques" }
     ]},
     { title: "Automatismes", color: "#ff9800", links: [
       { href: "https://coopmaths.fr/alea/", label: "coopmaths" },
@@ -3495,13 +3493,12 @@ toggleButton.addEventListener('click', () => {
     { title: "Outils", color: "#009688", links: [
       { href: "https://arnaud-lierville.github.io/", label: "Maths en classe" },
       { href: "https://polypad.amplify.com/fr/p", label: "Polypad" },
-      { href: "https://www.geogebra.org/m/jmh9kbbp", label: "Animations Lumni" },
-	  { href: "https://ladigitale.dev/digiscreen/", label: "Digiscreen" }	
+      { href: "https://www.geogebra.org/m/jmh9kbbp", label: "Animations Lumni" }
     ]}
   ];
-
+ 
   const MM_STATE = { expanded: {} };
-
+ 
   function mmCurvePath(x1, y1, x2, y2, bendFactor) {
     const dx = x2 - x1, dy = y2 - y1;
     const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
@@ -3511,19 +3508,19 @@ toggleButton.addEventListener('click', () => {
     const cx1 = mx + nx * bend, cy1 = my + ny * bend;
     return "M " + x1 + " " + y1 + " Q " + cx1 + " " + cy1 + " " + x2 + " " + y2;
   }
-
+ 
   function mmEl(tag, attrs) {
     const NS = "http://www.w3.org/2000/svg";
     const el = document.createElementNS(NS, tag);
     for (const k in attrs) el.setAttribute(k, attrs[k]);
     return el;
   }
-
+ 
   function renderMindmap() {
     const svg = document.getElementById('mindmap-svg');
     if (!svg) return;
     svg.innerHTML = '';
-
+ 
     const NS = "http://www.w3.org/2000/svg";
     const isDark = document.body.classList.contains('dark-mode');
     const defs = document.createElementNS(NS, 'defs');
@@ -3533,7 +3530,7 @@ toggleButton.addEventListener('click', () => {
     grad.appendChild(stop1);
     grad.appendChild(stop2);
     defs.appendChild(grad);
-
+ 
     if (isDark) {
       // Soleil : dégradé radial chaud + lueur
       const sunGrad = mmEl('radialGradient', { id: 'mm-sun-grad', cx: '35%', cy: '32%', r: '75%' });
@@ -3542,7 +3539,7 @@ toggleButton.addEventListener('click', () => {
       sunGrad.appendChild(mmEl('stop', { offset: '75%', 'stop-color': '#ff9d1f' }));
       sunGrad.appendChild(mmEl('stop', { offset: '100%', 'stop-color': '#e2650c' }));
       defs.appendChild(sunGrad);
-
+ 
       const glow = mmEl('filter', { id: 'mm-sun-glow', x: '-80%', y: '-80%', width: '260%', height: '260%' });
       const blur = mmEl('feGaussianBlur', { stdDeviation: '10', result: 'blur' });
       const merge = mmEl('feMerge', {});
@@ -3551,7 +3548,7 @@ toggleButton.addEventListener('click', () => {
       glow.appendChild(blur);
       glow.appendChild(merge);
       defs.appendChild(glow);
-
+ 
       // Une planète = dégradé radial (côté éclairé / côté ombré) par catégorie
       MM_DATA.forEach((cat, i) => {
         const pg = mmEl('radialGradient', { id: 'mm-planet-grad-' + i, cx: '35%', cy: '30%', r: '75%' });
@@ -3561,21 +3558,21 @@ toggleButton.addEventListener('click', () => {
         defs.appendChild(pg);
       });
     }
-
+ 
     svg.appendChild(defs);
-
+ 
     const catRadius = 250;
     const leafRadius = 225;
     // Portée maximale possible depuis le centre (branche + 2e couronne + moitié d'étiquette la plus large)
     const maxReach = catRadius + leafRadius + 55 + 84;
     const fixedW = maxReach * 2 + 24; // marge de sécurité, indépendante du nombre de branches
     const cx = fixedW / 2, cy = 430;
-
+ 
     const linesGroup = mmEl('g', {});
     const nodesGroup = mmEl('g', {});
     svg.appendChild(linesGroup);
     svg.appendChild(nodesGroup);
-
+ 
     // Nœud central
     const centerG = mmEl('g', {});
     const centerCircle = mmEl('circle', {
@@ -3598,26 +3595,26 @@ toggleButton.addEventListener('click', () => {
       renderMindmap();
     });
     nodesGroup.appendChild(centerG);
-
+ 
     MM_DATA.forEach((cat, i) => {
       const angleDeg = -135 + i * (360 / MM_DATA.length);
       const angleRad = angleDeg * Math.PI / 180;
       const catX = cx + catRadius * Math.cos(angleRad);
       const catY = cy + catRadius * Math.sin(angleRad);
-
+ 
       const linePath = mmEl('path', {
         d: mmCurvePath(cx, cy, catX, catY, 0.18),
         class: 'mm-line mm-line-main' + (isDark ? ' mm-orbit-dark' : ''),
         stroke: isDark ? '#5b6b8c' : cat.color
       });
       linesGroup.appendChild(linePath);
-
+ 
       const isOpen = !!MM_STATE.expanded[cat.title];
-
+ 
       const catR = 40;
       // Le texte s'adapte à la largeur du cercle plutôt que l'inverse
       const catFontSize = Math.max(9, Math.min(16.5, (catR * 1.7) / (cat.title.length * 0.56)));
-
+ 
       const catG = mmEl('g', { class: 'mm-cat-group' });
       const catCircle = mmEl('circle', {
         cx: catX, cy: catY, r: catR,
@@ -3638,43 +3635,43 @@ toggleButton.addEventListener('click', () => {
         renderMindmap();
       });
       nodesGroup.appendChild(catG);
-
+ 
       if (isOpen) {
         const n = cat.links.length;
         const gapPx = 4;
-
+ 
         // Deux couronnes alternées pour réduire l'encombrement angulaire
         const radii = cat.links.map((_, j) => leafRadius + (j % 2) * 55);
-
+ 
         const widths = cat.links.map(link => {
           const label = link.label || '';
           return Math.max(70, Math.min(148, label.length * 6.9 + 20));
         });
         const angWidths = widths.map((w, j) => (w + gapPx) / radii[j] * (180 / Math.PI));
         const totalAng = angWidths.reduce((a, b) => a + b, 0);
-
+ 
         let cursor = angleDeg - totalAng / 2;
-
+ 
         cat.links.forEach((link, j) => {
           const leafAngleDeg = n === 1 ? angleDeg : cursor + angWidths[j] / 2;
           cursor += angWidths[j];
-
+ 
           const r = radii[j];
           const leafAngleRad = leafAngleDeg * Math.PI / 180;
           const leafX = catX + r * Math.cos(leafAngleRad);
           const leafY = catY + r * Math.sin(leafAngleRad);
-
+ 
           const leafLine = mmEl('path', {
             d: mmCurvePath(catX, catY, leafX, leafY, 0.1),
             class: 'mm-line mm-line-leaf',
             stroke: cat.color
           });
           linesGroup.appendChild(leafLine);
-
+ 
           const label = link.label || '';
           const rectW = widths[j];
           const rectH = 30;
-
+ 
           const leafA = mmEl('a', { href: link.href || '#', target: '_blank', class: 'mm-leaf-group' });
           leafA.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', link.href || '#');
           if (link.href) {
@@ -3696,7 +3693,7 @@ toggleButton.addEventListener('click', () => {
         });
       }
     });
-
+ 
     // Garder une échelle horizontale fixe (pas de zoom) et n'adapter que la hauteur
     requestAnimationFrame(() => {
       try {
@@ -3740,14 +3737,14 @@ function createStars(count = 120) {
     starsContainer.appendChild(star);
   }
 }
-
+ 
 function createShootingStar() {
   const container = document.getElementById('shooting-stars');
   const star = document.createElement('div');
   star.classList.add('shooting-star');
   star.style.top = `${Math.random() * 50}%`;
   star.style.left = `${Math.random() * 80}%`;
-
+ 
   // Angle de trajectoire aléatoire (en degrés, mesuré depuis l'horizontale,
   // 15° à 165° = toujours vers le bas, tantôt vers la droite tantôt vers la gauche)
   const angle = 15 + Math.random() * 150;
@@ -3755,16 +3752,16 @@ function createShootingStar() {
   const rad = angle * Math.PI / 180;
   const tx = Math.cos(rad) * distance;
   const ty = Math.sin(rad) * distance;
-
+ 
   // L'inclinaison visuelle de la traînée suit exactement la même direction
   star.style.setProperty('--angle', `${angle - 90}deg`);
   star.style.setProperty('--tx', `${tx}px`);
   star.style.setProperty('--ty', `${ty}px`);
-
+ 
   container.appendChild(star);
   setTimeout(() => star.remove(), 1500);
 }
-
+ 
 function randomShootingStars() {
   setInterval(() => {
     if (document.body.classList.contains('dark-mode')) {
@@ -3772,7 +3769,7 @@ function randomShootingStars() {
     }
   }, 4000 + Math.random() * 3000);
 }
-
+ 
 createStars();
 randomShootingStars();
 </script>
@@ -3780,143 +3777,310 @@ randomShootingStars();
 // === Mini effet Matrix dans le bouton LATEX ===
 const canvas = document.getElementById('latex-matrix');
 const ctx = canvas.getContext('2d');
-
+ 
 function resizeMatrix() {
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
 }
 resizeMatrix();
 window.addEventListener('resize', resizeMatrix);
-
+ 
 const chars = '01ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾｽﾀ';
 const fontSize = 14;
 let columns = Math.floor(canvas.width / fontSize);
 const drops = Array(columns).fill(1);
-
+ 
 function drawMatrix() {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'; // léger fondu
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+ 
   ctx.fillStyle = '#0F0';
   ctx.font = fontSize + 'px monospace';
-
+ 
   for (let i = 0; i < drops.length; i++) {
     const text = chars.charAt(Math.floor(Math.random() * chars.length));
     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
+ 
     if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
     drops[i]++;
   }
 }
-
+ 
 setInterval(drawMatrix, 50);
 </script>
 <script>
-// === ✨ Volute de poussière d'étoiles interactive (mode nuit uniquement, derrière les accordéons) ===
+// === 🦋✨ Libellule phosphorescente / néon (mode nuit uniquement, derrière les accordéons) ===
 (function () {
   const canvas = document.getElementById('anglerfish-canvas');
   const ctx = canvas.getContext('2d');
   let width, height;
-
+ 
   function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
+    width = canvas.width = document.documentElement.clientWidth;
+    height = canvas.height = document.documentElement.clientHeight;
   }
   resize();
   window.addEventListener('resize', resize);
-
+ 
   const pointer = {
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2
+    x: document.documentElement.clientWidth / 2,
+    y: document.documentElement.clientHeight / 2,
+    vx: 0,
+    vy: 0
   };
   let hasMouse = false;
-
+ 
   window.addEventListener('mousemove', (e) => {
+    pointer.vx = e.clientX - pointer.x;
+    pointer.vy = e.clientY - pointer.y;
     pointer.x = e.clientX;
     pointer.y = e.clientY;
     hasMouse = true;
   });
-
-  const particles = [];
-  const MAX_PARTICLES = 90;
-  let time = 0;
-
-  function spawnParticle() {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = 0.25 + Math.random() * 0.5;
-    particles.push({
-      x: pointer.x + (Math.random() - 0.5) * 6,
-      y: pointer.y + (Math.random() - 0.5) * 6,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed - 0.25,
-      size: 0.8 + Math.random() * 1.6,
-      life: 1,
-      decay: 0.012 + Math.random() * 0.016,
-      warm: Math.random() < 0.28
-    });
-    if (particles.length > MAX_PARTICLES) particles.shift();
+ 
+  const SEGMENT_COUNT = 10;
+  const BASE_SEGMENT_LEN = 8;
+  const segments = [];
+  for (let i = 0; i < SEGMENT_COUNT; i++) {
+    segments.push({ x: pointer.x, y: pointer.y });
   }
-
+ 
+  let headAngle = 0;
+  let time = 0;
+  let wingPhase = 0;
+ 
   function update() {
     time += 0.016;
-    if (hasMouse && Math.random() < 0.75) spawnParticle();
-
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy -= 0.0025; // légère montée, effet féérique
-      p.vx *= 0.98;
-      p.vy *= 0.98;
-      p.life -= p.decay;
-      if (p.life <= 0) particles.splice(i, 1);
+    const head = segments[0];
+    const ease = 0.14;
+    head.x += (pointer.x - head.x) * ease;
+    head.y += (pointer.y - head.y) * ease;
+ 
+    const dx0 = pointer.x - head.x;
+    const dy0 = pointer.y - head.y;
+    if (Math.hypot(dx0, dy0) > 1) {
+      headAngle = Math.atan2(dy0, dx0);
     }
+ 
+    const pointerSpeed = Math.hypot(pointer.vx, pointer.vy);
+    const fastMovement = Math.min(Math.max(pointerSpeed - 12, 0) / 16, 1);
+    const segLen = BASE_SEGMENT_LEN * (1 + fastMovement * 0.5);
+ 
+    wingPhase += 0.55 + fastMovement * 0.5;
+ 
+    for (let i = 1; i < SEGMENT_COUNT; i++) {
+      const prev = segments[i - 1];
+      const cur = segments[i];
+      const ddx = prev.x - cur.x;
+      const ddy = prev.y - cur.y;
+      const dist = Math.hypot(ddx, ddy) || 0.0001;
+      const diff = dist - segLen;
+      const wave = Math.sin(time * 5 - i * 0.7) * 1.4 * (1 - fastMovement * 0.4);
+      const nx = -ddy / dist;
+      const ny = ddx / dist;
+      cur.x += (ddx / dist) * diff + nx * wave * 0.12;
+      cur.y += (ddy / dist) * diff + ny * wave * 0.12;
+    }
+ 
+    pointer.vx *= 0.9;
+    pointer.vy *= 0.9;
   }
-
+ 
+  // Palette néon : corps cyan électrique, reflets magenta
+  function drawBody() {
+    ctx.save();
+    ctx.shadowColor = 'rgba(80, 255, 240, 0.9)';
+    ctx.shadowBlur = 12;
+ 
+    const top = [];
+    const bottom = [];
+    for (let i = 0; i < segments.length; i++) {
+      const t = i / (segments.length - 1);
+      const w = 3.4 * (1 - t * 0.85) + 0.3;
+      const a = segments[i - 1] || segments[i];
+      const b = segments[i + 1] || segments[i];
+      const ang = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
+      top.push({ x: segments[i].x + Math.cos(ang) * w, y: segments[i].y + Math.sin(ang) * w });
+      bottom.push({ x: segments[i].x - Math.cos(ang) * w, y: segments[i].y - Math.sin(ang) * w });
+    }
+ 
+    const grad = ctx.createLinearGradient(segments[0].x, segments[0].y, segments[segments.length - 1].x, segments[segments.length - 1].y);
+    grad.addColorStop(0, 'rgba(120, 255, 255, 0.95)');
+    grad.addColorStop(0.5, 'rgba(80, 220, 255, 0.85)');
+    grad.addColorStop(1, 'rgba(200, 100, 255, 0.55)');
+ 
+    ctx.beginPath();
+    ctx.moveTo(top[0].x, top[0].y);
+    for (let i = 1; i < top.length; i++) ctx.lineTo(top[i].x, top[i].y);
+    for (let i = bottom.length - 1; i >= 0; i--) ctx.lineTo(bottom[i].x, bottom[i].y);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+ 
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.lineWidth = 0.6;
+    for (let i = 2; i < segments.length - 1; i++) {
+      const t = i / (segments.length - 1);
+      const w = 3.4 * (1 - t * 0.85) + 0.3;
+      const a = segments[i];
+      const b = segments[i + 1] || a;
+      const ang = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
+      ctx.beginPath();
+      ctx.moveTo(a.x + Math.cos(ang) * w, a.y + Math.sin(ang) * w);
+      ctx.lineTo(a.x - Math.cos(ang) * w, a.y - Math.sin(ang) * w);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+ 
+  function drawTailFin() {
+    const tail = segments[SEGMENT_COUNT - 1];
+    const tailPrev = segments[SEGMENT_COUNT - 2];
+    const tailAngle = Math.atan2(tail.y - tailPrev.y, tail.x - tailPrev.x);
+    ctx.save();
+    ctx.shadowColor = 'rgba(200, 100, 255, 0.8)';
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = 'rgba(200, 100, 255, 0.75)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.lineWidth = 0.6;
+    const forkA = tailAngle + 0.4;
+    const forkB = tailAngle - 0.4;
+    ctx.beginPath();
+    ctx.moveTo(tail.x, tail.y);
+    ctx.lineTo(tail.x + Math.cos(forkA) * 6, tail.y + Math.sin(forkA) * 6);
+    ctx.lineTo(tail.x + Math.cos(tailAngle) * 4, tail.y + Math.sin(tailAngle) * 4);
+    ctx.lineTo(tail.x + Math.cos(forkB) * 6, tail.y + Math.sin(forkB) * 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+ 
+  function drawWings() {
+    const wingBase = segments[1] || segments[0];
+    const flapFront = Math.sin(wingPhase) * 0.5;
+    const flapBack = Math.sin(wingPhase + Math.PI * 0.15) * 0.5;
+    const shimmer = 0.5 + Math.sin(time * 3) * 0.5;
+ 
+    function wing(offsetAlong, spread, length, flap, side) {
+      const perpAngle = headAngle + Math.PI / 2 * side;
+      const alongAngle = headAngle;
+      const baseX = wingBase.x + Math.cos(alongAngle) * offsetAlong;
+      const baseY = wingBase.y + Math.sin(alongAngle) * offsetAlong;
+      const openAngle = perpAngle + flap * 0.6 * side;
+      const tipX = baseX + Math.cos(openAngle) * length;
+      const tipY = baseY + Math.sin(openAngle) * length * (0.55 + Math.abs(flap) * 0.4);
+      const ctrl1X = baseX + Math.cos(openAngle - 0.3 * side) * length * 0.5 + Math.cos(alongAngle) * spread * 0.3;
+      const ctrl1Y = baseY + Math.sin(openAngle - 0.3 * side) * length * 0.5 + Math.sin(alongAngle) * spread * 0.3;
+      const ctrl2X = baseX + Math.cos(openAngle + 0.25 * side) * length * 0.7 - Math.cos(alongAngle) * spread * 0.25;
+      const ctrl2Y = baseY + Math.sin(openAngle + 0.25 * side) * length * 0.7 - Math.sin(alongAngle) * spread * 0.25;
+ 
+      ctx.beginPath();
+      ctx.moveTo(baseX, baseY);
+      ctx.quadraticCurveTo(ctrl1X, ctrl1Y, tipX, tipY);
+      ctx.quadraticCurveTo(ctrl2X, ctrl2Y, baseX, baseY);
+      ctx.closePath();
+ 
+      const grad = ctx.createLinearGradient(baseX, baseY, tipX, tipY);
+      grad.addColorStop(0, `rgba(150, 255, 255, ${0.75 + shimmer * 0.25})`);
+      grad.addColorStop(0.6, `rgba(255, 130, 255, ${0.4 + shimmer * 0.25})`);
+      grad.addColorStop(1, 'rgba(255, 130, 255, 0.05)');
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.strokeStyle = `rgba(150, 255, 255, ${0.6 + shimmer * 0.3})`;
+      ctx.lineWidth = 0.9;
+      ctx.stroke();
+ 
+      ctx.strokeStyle = `rgba(150, 255, 255, 0.5)`;
+      ctx.lineWidth = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(baseX, baseY);
+      ctx.lineTo(tipX, tipY);
+      ctx.stroke();
+    }
+ 
+    ctx.save();
+    ctx.shadowColor = 'rgba(150, 255, 255, 0.9)';
+    ctx.shadowBlur = 10;
+    [1, -1].forEach((side) => {
+      wing(1, 8, 17, flapBack, side);
+      wing(4, 7, 19, flapFront, side);
+    });
+    ctx.restore();
+  }
+ 
+  function drawHead() {
+    const head = segments[0];
+    ctx.save();
+    ctx.fillStyle = 'rgba(150, 255, 240, 0.95)';
+    ctx.shadowColor = 'rgba(150, 255, 240, 0.9)';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.ellipse(head.x, head.y, 3, 2.4, headAngle, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+ 
+    ctx.save();
+    [1, -1].forEach((side) => {
+      const eyeAngle = headAngle + side * 1.1;
+      const ex = head.x + Math.cos(eyeAngle) * 2.2;
+      const ey = head.y + Math.sin(eyeAngle) * 2.2;
+      const grad = ctx.createRadialGradient(ex, ey, 0, ex, ey, 1.8);
+      grad.addColorStop(0, 'rgba(255, 120, 255, 0.95)');
+      grad.addColorStop(1, 'rgba(150, 60, 220, 0.7)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(ex, ey, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.beginPath();
+      ctx.arc(ex - 0.5, ey - 0.5, 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+ 
+  function drawSparkle() {
+    // halo lumineux néon sur le curseur, façon luciole
+    const pulse = 0.6 + Math.sin(time * 3.5) * 0.4;
+    const x = pointer.x;
+    const y = pointer.y;
+ 
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const rayCount = 4;
+    for (let i = 0; i < rayCount; i++) {
+      const a = (i / rayCount) * Math.PI * 2 + time * 0.6;
+      const rayLen = 9 + pulse * 6;
+      ctx.strokeStyle = `rgba(150, 255, 255, ${0.45 * pulse})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x - Math.cos(a) * rayLen, y - Math.sin(a) * rayLen);
+      ctx.lineTo(x + Math.cos(a) * rayLen, y + Math.sin(a) * rayLen);
+      ctx.stroke();
+    }
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, 10 + pulse * 4);
+    grad.addColorStop(0, `rgba(200, 255, 255, ${0.6 * pulse})`);
+    grad.addColorStop(1, 'rgba(200, 255, 255, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(x, y, 10 + pulse * 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+ 
   function draw() {
     ctx.clearRect(0, 0, width, height);
     if (!document.body.classList.contains('dark-mode')) return;
     if (!hasMouse) return;
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-
-    // Halo doux et pulsant autour du curseur
-    const pulse = 0.6 + Math.sin(time * 2.2) * 0.25;
-    const haloRadius = 20 * pulse + 8;
-    const halo = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, haloRadius);
-    halo.addColorStop(0, 'rgba(215, 232, 255, 0.4)');
-    halo.addColorStop(1, 'rgba(215, 232, 255, 0)');
-    ctx.fillStyle = halo;
-    ctx.beginPath();
-    ctx.arc(pointer.x, pointer.y, haloRadius, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Point lumineux central
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.beginPath();
-    ctx.arc(pointer.x, pointer.y, 1.6, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Traînée de poussière d'étoiles
-    particles.forEach((p) => {
-      const alpha = Math.max(p.life, 0);
-      const color = p.warm
-        ? `rgba(255, 235, 200, ${alpha})`
-        : `rgba(195, 222, 255, ${alpha})`;
-      const r = p.size * 2.4;
-      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
-      grad.addColorStop(0, color);
-      grad.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    ctx.restore();
+ 
+    drawWings();
+    drawBody();
+    drawTailFin();
+    drawHead();
+    drawSparkle();
   }
-
+ 
   function loop() {
     update();
     draw();
@@ -3931,22 +4095,22 @@ setInterval(drawMatrix, 50);
   const canvas = document.getElementById('dragonfly-canvas');
   const ctx = canvas.getContext('2d');
   let width, height;
-
+ 
   function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
+    width = canvas.width = document.documentElement.clientWidth;
+    height = canvas.height = document.documentElement.clientHeight;
   }
   resize();
   window.addEventListener('resize', resize);
-
+ 
   const pointer = {
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
+    x: document.documentElement.clientWidth / 2,
+    y: document.documentElement.clientHeight / 2,
     vx: 0,
     vy: 0
   };
   let hasMouse = false;
-
+ 
   window.addEventListener('mousemove', (e) => {
     pointer.vx = e.clientX - pointer.x;
     pointer.vy = e.clientY - pointer.y;
@@ -3954,38 +4118,38 @@ setInterval(drawMatrix, 50);
     pointer.y = e.clientY;
     hasMouse = true;
   });
-
+ 
   const SEGMENT_COUNT = 10;
   const BASE_SEGMENT_LEN = 8;
   const segments = [];
   for (let i = 0; i < SEGMENT_COUNT; i++) {
     segments.push({ x: pointer.x, y: pointer.y });
   }
-
+ 
   let headAngle = 0;
   let time = 0;
   let wingPhase = 0;
-
+ 
   function update() {
     time += 0.016;
     const head = segments[0];
     const ease = 0.14;
     head.x += (pointer.x - head.x) * ease;
     head.y += (pointer.y - head.y) * ease;
-
+ 
     const dx0 = pointer.x - head.x;
     const dy0 = pointer.y - head.y;
     if (Math.hypot(dx0, dy0) > 1) {
       headAngle = Math.atan2(dy0, dx0);
     }
-
+ 
     const pointerSpeed = Math.hypot(pointer.vx, pointer.vy);
     const fastMovement = Math.min(Math.max(pointerSpeed - 12, 0) / 16, 1);
     const segLen = BASE_SEGMENT_LEN * (1 + fastMovement * 0.5);
-
+ 
     // Battement d'ailes plus rapide quand la libellule vole vite
     wingPhase += 0.55 + fastMovement * 0.5;
-
+ 
     for (let i = 1; i < SEGMENT_COUNT; i++) {
       const prev = segments[i - 1];
       const cur = segments[i];
@@ -3999,17 +4163,17 @@ setInterval(drawMatrix, 50);
       cur.x += (ddx / dist) * diff + nx * wave * 0.12;
       cur.y += (ddy / dist) * diff + ny * wave * 0.12;
     }
-
+ 
     pointer.vx *= 0.9;
     pointer.vy *= 0.9;
   }
-
+ 
   function drawBody() {
     // Abdomen fin, segmenté, effilé vers la queue
     ctx.save();
     ctx.shadowColor = 'rgba(30, 90, 110, 0.25)';
     ctx.shadowBlur = 4;
-
+ 
     const top = [];
     const bottom = [];
     for (let i = 0; i < segments.length; i++) {
@@ -4021,12 +4185,12 @@ setInterval(drawMatrix, 50);
       top.push({ x: segments[i].x + Math.cos(ang) * w, y: segments[i].y + Math.sin(ang) * w });
       bottom.push({ x: segments[i].x - Math.cos(ang) * w, y: segments[i].y - Math.sin(ang) * w });
     }
-
+ 
     const grad = ctx.createLinearGradient(segments[0].x, segments[0].y, segments[segments.length - 1].x, segments[segments.length - 1].y);
     grad.addColorStop(0, 'rgba(30, 140, 160, 0.85)');
     grad.addColorStop(0.5, 'rgba(20, 110, 140, 0.7)');
     grad.addColorStop(1, 'rgba(15, 90, 120, 0.45)');
-
+ 
     ctx.beginPath();
     ctx.moveTo(top[0].x, top[0].y);
     for (let i = 1; i < top.length; i++) ctx.lineTo(top[i].x, top[i].y);
@@ -4034,7 +4198,7 @@ setInterval(drawMatrix, 50);
     ctx.closePath();
     ctx.fillStyle = grad;
     ctx.fill();
-
+ 
     // segmentation de l'abdomen
     ctx.strokeStyle = 'rgba(10, 60, 80, 0.35)';
     ctx.lineWidth = 0.6;
@@ -4051,7 +4215,7 @@ setInterval(drawMatrix, 50);
     }
     ctx.restore();
   }
-
+ 
   function drawTailFin() {
     const tail = segments[SEGMENT_COUNT - 1];
     const tailPrev = segments[SEGMENT_COUNT - 2];
@@ -4072,14 +4236,14 @@ setInterval(drawMatrix, 50);
     ctx.stroke();
     ctx.restore();
   }
-
+ 
   function drawWings() {
     const wingBase = segments[1] || segments[0];
     // deux paires d'ailes : avant et arrière, en opposition de phase comme une vraie libellule
     const flapFront = Math.sin(wingPhase) * 0.5;
     const flapBack = Math.sin(wingPhase + Math.PI * 0.15) * 0.5;
     const shimmer = 0.5 + Math.sin(time * 3) * 0.5;
-
+ 
     function wing(offsetAlong, spread, length, flap, side) {
       const perpAngle = headAngle + Math.PI / 2 * side;
       const alongAngle = headAngle;
@@ -4093,13 +4257,13 @@ setInterval(drawMatrix, 50);
       const ctrl1Y = baseY + Math.sin(openAngle - 0.3 * side) * length * 0.5 + Math.sin(alongAngle) * spread * 0.3;
       const ctrl2X = baseX + Math.cos(openAngle + 0.25 * side) * length * 0.7 - Math.cos(alongAngle) * spread * 0.25;
       const ctrl2Y = baseY + Math.sin(openAngle + 0.25 * side) * length * 0.7 - Math.sin(alongAngle) * spread * 0.25;
-
+ 
       ctx.beginPath();
       ctx.moveTo(baseX, baseY);
       ctx.quadraticCurveTo(ctrl1X, ctrl1Y, tipX, tipY);
       ctx.quadraticCurveTo(ctrl2X, ctrl2Y, baseX, baseY);
       ctx.closePath();
-
+ 
       const grad = ctx.createLinearGradient(baseX, baseY, tipX, tipY);
       grad.addColorStop(0, `rgba(255, 255, 255, ${0.6 + shimmer * 0.25})`);
       grad.addColorStop(0.6, `rgba(255, 255, 255, ${0.4 + shimmer * 0.2})`);
@@ -4109,7 +4273,7 @@ setInterval(drawMatrix, 50);
       ctx.strokeStyle = `rgba(40, 70, 90, ${0.5 + shimmer * 0.2})`;
       ctx.lineWidth = 0.9;
       ctx.stroke();
-
+ 
       // nervures de l'aile
       ctx.strokeStyle = `rgba(40, 70, 90, 0.4)`;
       ctx.lineWidth = 0.6;
@@ -4118,7 +4282,7 @@ setInterval(drawMatrix, 50);
       ctx.lineTo(tipX, tipY);
       ctx.stroke();
     }
-
+ 
     ctx.save();
     ctx.shadowColor = 'rgba(30, 60, 80, 0.35)';
     ctx.shadowBlur = 3;
@@ -4128,7 +4292,7 @@ setInterval(drawMatrix, 50);
     });
     ctx.restore();
   }
-
+ 
   function drawHead() {
     const head = segments[0];
     ctx.save();
@@ -4139,7 +4303,7 @@ setInterval(drawMatrix, 50);
     ctx.ellipse(head.x, head.y, 3, 2.4, headAngle, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
-
+ 
     // grands yeux composés, caractéristiques de la libellule
     ctx.save();
     [1, -1].forEach((side) => {
@@ -4161,13 +4325,13 @@ setInterval(drawMatrix, 50);
     });
     ctx.restore();
   }
-
+ 
   function drawSparkle() {
     // scintillement de lumière au soleil, à la place de la lanterne, sur le curseur
     const pulse = 0.6 + Math.sin(time * 3.5) * 0.4;
     const x = pointer.x;
     const y = pointer.y;
-
+ 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     const rayCount = 4;
@@ -4190,19 +4354,19 @@ setInterval(drawMatrix, 50);
     ctx.fill();
     ctx.restore();
   }
-
+ 
   function draw() {
     ctx.clearRect(0, 0, width, height);
     if (document.body.classList.contains('dark-mode')) return;
     if (!hasMouse) return;
-
+ 
     drawWings();
     drawBody();
     drawTailFin();
     drawHead();
     drawSparkle();
   }
-
+ 
   function loop() {
     update();
     draw();
